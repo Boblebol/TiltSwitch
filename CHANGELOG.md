@@ -2,6 +2,11 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.9 - 2026-05-05
+
+- Removed status item position autosaving so macOS cannot restore a hidden or stale menu bar placement.
+- Changed the menu bar item to plain `TiltSwitch` text for maximum visibility.
+
 ## 0.1.8 - 2026-05-05
 
 - Changed the menu bar item from icon-only to a visible `Tilt` label with a directional icon.

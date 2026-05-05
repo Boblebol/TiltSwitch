@@ -36,7 +36,7 @@ Manual app checks require camera permission and Mission Control shortcuts:
 
 1. Launch TiltSwitch.
 2. Grant camera permission.
-3. Confirm the `Tilt` menu bar item appears near Control Center.
+3. Confirm the `TiltSwitch` menu bar item appears near Control Center.
 4. Run `Diagnostics > Test HUD Left` and `Test HUD Right`; the menu bar item should briefly change to `Left` or `Right`.
 5. Select Medium sensitivity.
 6. Tilt right and verify the next Mission Control space is selected.

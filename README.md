@@ -12,7 +12,7 @@ It is built with pure Apple frameworks, no third-party dependencies, and a progr
 
 ## Features
 
-- Dock icon plus visible `Tilt` menu bar status item
+- Dock icon plus visible `TiltSwitch` menu bar status item
 - Real-time head roll detection with `AVCaptureSession` and `VNDetectFaceLandmarksRequest`
 - Mission Control space switching through `CGEvent`
 - 800ms cooldown to avoid repeated space switches
@@ -48,7 +48,7 @@ Website: https://boblebol.github.io/TiltSwitch/
 
 ## Debug And Verify
 
-After launching TiltSwitch, use the Dock icon or the `Tilt` item in the top-right menu bar, near Control Center:
+After launching TiltSwitch, use the Dock icon or the `TiltSwitch` item in the top-right menu bar, near Control Center:
 
 1. Open `Diagnostics > Run Self Check`.
 2. Confirm camera permission is OK.
@@ -58,7 +58,7 @@ After launching TiltSwitch, use the Dock icon or the `Tilt` item in the top-righ
 
 The app also has quick links to the website, GitHub, Camera Settings, and Quit.
 
-If you see the Dock icon but not the menu bar item, make sure you are running `0.1.8` or newer. Older builds used an icon-only status item that could be easy to miss.
+If you see the Dock icon but not the menu bar item, make sure you are running `0.1.9` or newer. Older builds used a saved or icon-heavy status item that could be easy to miss.
 
 ## Build
 

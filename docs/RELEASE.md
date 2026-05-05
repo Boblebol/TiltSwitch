@@ -16,7 +16,7 @@ xmllint --noout TiltSwitch.xcodeproj/xcshareddata/xcschemes/TiltSwitch.xcscheme
 Then verify:
 
 - The Dock icon is visible.
-- The `Tilt` menu bar status item is visible near Control Center.
+- The `TiltSwitch` menu bar status item is visible near Control Center.
 - `Info.plist` contains `NSCameraUsageDescription`.
 - `TiltSwitch.entitlements` contains camera access only.
 - App Sandbox is not enabled in the project.

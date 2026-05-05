@@ -30,13 +30,13 @@ xcodebuild build \
 With a full Xcode installation selected:
 
 ```sh
-bash scripts/package-release.sh 0.1.8
+bash scripts/package-release.sh 0.1.9
 ```
 
 This creates:
 
-- `dist/TiltSwitch-v0.1.8-macOS.dmg`
-- `dist/TiltSwitch-v0.1.8-macOS.zip`
+- `dist/TiltSwitch-v0.1.9-macOS.dmg`
+- `dist/TiltSwitch-v0.1.9-macOS.zip`
 - `dist/checksums.txt`
 
 If code signing is not configured:

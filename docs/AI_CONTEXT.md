@@ -13,7 +13,7 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 ## Hard Requirements
 
 - Dock icon should be visible.
-- `Tilt` menu bar status item should be visible near Control Center.
+- `TiltSwitch` menu bar status item should be visible near Control Center.
 - No storyboard or XIB.
 - No external dependencies.
 - No Swift Package dependencies.
