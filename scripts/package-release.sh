@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="${1:-0.1.3}"
+VERSION="${1:-0.1.4}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="$ROOT_DIR/build"
 DERIVED_DATA_DIR="$BUILD_DIR/DerivedData"
@@ -28,14 +28,10 @@ xcodebuild build \
 codesign --verify --deep --strict "$APP_PATH"
 
 ARCH_OUTPUT="$(lipo -archs "$APP_PATH/Contents/MacOS/TiltSwitch")"
-case " $ARCH_OUTPUT " in
-  *" arm64 "*" x86_64 "*|*" x86_64 "*" arm64 "*)
-    ;;
-  *)
-    printf 'Expected Universal binary with arm64 and x86_64, got: %s\n' "$ARCH_OUTPUT" >&2
-    exit 1
-    ;;
-esac
+if [[ " $ARCH_OUTPUT " != *" arm64 "* || " $ARCH_OUTPUT " != *" x86_64 "* ]]; then
+  printf 'Expected Universal binary with arm64 and x86_64, got: %s\n' "$ARCH_OUTPUT" >&2
+  exit 1
+fi
 
 ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
 

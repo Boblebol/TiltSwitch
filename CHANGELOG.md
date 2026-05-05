@@ -2,6 +2,10 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.4 - 2026-05-05
+
+- Fixed the Universal architecture validation script so it accepts `lipo` output in either architecture order.
+
 ## 0.1.3 - 2026-05-05
 
 - Forced release packaging to build a Universal `arm64` + `x86_64` binary.
