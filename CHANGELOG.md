@@ -2,6 +2,12 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.2 - 2026-05-05
+
+- Changed the menu bar item to a compact square walking icon so it stays visible on crowded or notched menu bars.
+- Added clearer troubleshooting docs for the case where the Dock icon appears but the menu bar icon is hard to find.
+- Updated release/package defaults to `0.1.2`.
+
 ## 0.1.1 - 2026-05-05
 
 - Added visible Dock icon and custom app icon.

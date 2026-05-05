@@ -36,7 +36,7 @@ Manual app checks require camera permission and Mission Control shortcuts:
 
 1. Launch TiltSwitch.
 2. Grant camera permission.
-3. Confirm the `figure.walk` menu bar item appears.
+3. Confirm the compact walking menu bar icon appears near Control Center.
 4. Select Medium sensitivity.
 5. Tilt right and verify the next Mission Control space is selected.
 6. Tilt left and verify the previous Mission Control space is selected.

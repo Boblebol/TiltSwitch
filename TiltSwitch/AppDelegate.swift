@@ -96,16 +96,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setupStatusItem() {
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        item.autosaveName = "TiltSwitchStatusItem"
         let image = NSImage(
             systemSymbolName: "figure.walk",
             accessibilityDescription: "TiltSwitch"
         )
         image?.isTemplate = true
         item.button?.image = image
-        item.button?.title = " \(AppMetadata.statusItemTitle)"
-        item.button?.imagePosition = .imageLeft
+        item.button?.imagePosition = .imageOnly
+        item.button?.imageScaling = .scaleProportionallyDown
+        item.button?.toolTip = "TiltSwitch"
         item.menu = makeStatusMenu()
+        item.isVisible = true
         statusItem = item
     }
 
@@ -506,7 +509,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             screenState,
             permission,
             sensitivityState,
-            "Menu bar item: visible",
+            "Menu bar item: created - look for the walking icon near Control Center",
             "Dock icon: visible",
             "Mission Control shortcuts: verify Control + Left/Right Arrow in System Settings"
         ].joined(separator: "\n")

@@ -4,7 +4,7 @@ TiltSwitch is a small AppKit menu bar app with strict boundaries between app lif
 
 ## Runtime Flow
 
-1. `AppDelegate` launches as an accessory app and creates the menu bar item.
+1. `AppDelegate` launches as a regular Dock app and creates the compact menu bar item.
 2. The app loads `UserDefaults` settings for enabled state and sensitivity.
 3. If enabled and unlocked, `AppDelegate` checks camera permission.
 4. `HeadTiltMonitor` starts an `AVCaptureSession` on a dedicated background queue.
@@ -69,7 +69,7 @@ Owns HUD presentation:
 - App Sandbox: disabled
 - Entitlements: camera only
 - Dock icon: enabled
-- Menu bar status item: enabled
+- Menu bar status item: enabled, compact square icon
 
 ## Performance Notes
 

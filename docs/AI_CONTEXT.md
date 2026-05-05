@@ -13,7 +13,7 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 ## Hard Requirements
 
 - Dock icon should be visible.
-- Menu bar status item should be visible.
+- Compact menu bar status item should be visible near Control Center.
 - No storyboard or XIB.
 - No external dependencies.
 - No Swift Package dependencies.
@@ -54,4 +54,4 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 - Cooldown: `SpaceSwitcher.init(cooldown:)`
 - Vision throttle: `HeadTiltMonitor.minimumVisionInterval`
 - HUD timing: `HUDDisplayController.show(_:in:)`
-- Menu structure: `AppDelegate.makeMenu()`
+- Menu structure: `AppDelegate.makeStatusMenu()`
