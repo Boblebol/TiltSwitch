@@ -12,7 +12,8 @@ TiltSwitch is a small AppKit menu bar app with strict boundaries between app lif
 6. `VNDetectFaceLandmarksRequest` detects the first face and reads its roll angle.
 7. Roll above the configured threshold emits `.right`; roll below the negative threshold emits `.left`.
 8. `SpaceSwitcher` applies an 800ms cooldown and posts `Control` + arrow key events.
-9. `HUDDisplayController` shows a floating SwiftUI arrow HUD for 600ms.
+9. `AppDelegate` animates the menu bar status item toward the detected direction.
+10. `HUDDisplayController` shows a floating SwiftUI arrow HUD for 600ms.
 
 ## Files
 
@@ -25,6 +26,7 @@ Owns app lifecycle and AppKit integration:
 - menu actions
 - sensitivity settings
 - diagnostics actions
+- menu bar tilt feedback animation
 - camera permission request
 - screen lock/sleep handling
 - transparent `NSPanel` creation

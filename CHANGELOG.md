@@ -2,6 +2,11 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.7 - 2026-05-05
+
+- Added menu bar feedback when a left or right head tilt is detected.
+- Moved directional UI feedback onto the main thread before updating AppKit views.
+
 ## 0.1.6 - 2026-05-05
 
 - Fixed release entitlement export so package validation reads the signed app entitlements as XML.

@@ -16,6 +16,7 @@ It is built with pure Apple frameworks, no third-party dependencies, and a progr
 - Real-time head roll detection with `AVCaptureSession` and `VNDetectFaceLandmarksRequest`
 - Mission Control space switching through `CGEvent`
 - 800ms cooldown to avoid repeated space switches
+- Menu bar icon pulses left or right when a tilt is detected
 - Sensitivity presets:
   - Low: `0.25` radians
   - Medium: `0.35` radians

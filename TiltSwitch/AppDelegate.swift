@@ -1,4 +1,5 @@
 import AppKit
+import QuartzCore
 import SwiftUI
 
 @main
@@ -42,6 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let spaceSwitcher = SpaceSwitcher()
 
     private var statusItem: NSStatusItem?
+    private var statusItemFeedbackWorkItem: DispatchWorkItem?
     private var hudPanel: NSPanel?
     private var isEnabled = true
     private var sensitivity: Sensitivity = .medium
@@ -98,12 +100,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         item.autosaveName = "TiltSwitchStatusItem"
-        let image = NSImage(
+        item.button?.image = makeStatusItemImage(
             systemSymbolName: "figure.walk",
             accessibilityDescription: "TiltSwitch"
         )
-        image?.isTemplate = true
-        item.button?.image = image
         item.button?.imagePosition = .imageOnly
         item.button?.imageScaling = .scaleProportionallyDown
         item.button?.toolTip = "TiltSwitch"
@@ -312,6 +312,63 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem?.menu = makeStatusMenu()
     }
 
+    private func makeStatusItemImage(
+        systemSymbolName: String,
+        accessibilityDescription: String
+    ) -> NSImage? {
+        let image = NSImage(
+            systemSymbolName: systemSymbolName,
+            accessibilityDescription: accessibilityDescription
+        )
+        image?.isTemplate = true
+        return image
+    }
+
+    private func showStatusItemFeedback(_ direction: Direction) {
+        guard let button = statusItem?.button else {
+            return
+        }
+
+        statusItemFeedbackWorkItem?.cancel()
+        button.image = makeStatusItemImage(
+            systemSymbolName: direction.statusItemSymbolName,
+            accessibilityDescription: direction.statusItemTooltip
+        )
+        button.toolTip = direction.statusItemTooltip
+        animateStatusItemButton(button, direction: direction)
+
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.restoreStatusItemIcon()
+        }
+        statusItemFeedbackWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55, execute: workItem)
+    }
+
+    private func animateStatusItemButton(_ button: NSStatusBarButton, direction: Direction) {
+        button.wantsLayer = true
+        button.layer?.removeAnimation(forKey: "tiltSwitchStatusPulse")
+
+        let rotation = direction.statusItemRotation
+        let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
+        animation.values = [0, rotation, -rotation * 0.35, 0]
+        animation.keyTimes = [0, 0.35, 0.72, 1]
+        animation.duration = 0.45
+        animation.timingFunctions = [
+            CAMediaTimingFunction(name: .easeOut),
+            CAMediaTimingFunction(name: .easeInEaseOut),
+            CAMediaTimingFunction(name: .easeOut)
+        ]
+        button.layer?.add(animation, forKey: "tiltSwitchStatusPulse")
+    }
+
+    private func restoreStatusItemIcon() {
+        statusItem?.button?.image = makeStatusItemImage(
+            systemSymbolName: "figure.walk",
+            accessibilityDescription: "TiltSwitch"
+        )
+        statusItem?.button?.toolTip = "TiltSwitch"
+    }
+
     func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
         let menu = NSMenu()
         menu.addItem(makeMenuItem(
@@ -401,6 +458,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
+        DispatchQueue.main.async { [weak self] in
+            self?.showDirectionalFeedback(direction)
+        }
+    }
+
+    private func showDirectionalFeedback(_ direction: Direction) {
+        showStatusItemFeedback(direction)
         guard let panel = hudPanel else {
             return
         }
@@ -542,10 +606,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showDiagnosticHUD(_ direction: Direction) {
-        guard let panel = hudPanel else {
-            return
-        }
-        hudDisplayController.show(direction, in: panel)
+        showDirectionalFeedback(direction)
     }
 
     private func testSpaceSwitch(_ direction: Direction) {
@@ -578,5 +639,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func quit() {
         NSApp.terminate(nil)
+    }
+}
+
+private extension Direction {
+    var statusItemSymbolName: String {
+        switch self {
+        case .left:
+            return "arrow.left.circle.fill"
+        case .right:
+            return "arrow.right.circle.fill"
+        }
+    }
+
+    var statusItemTooltip: String {
+        switch self {
+        case .left:
+            return "TiltSwitch detected a left tilt"
+        case .right:
+            return "TiltSwitch detected a right tilt"
+        }
+    }
+
+    var statusItemRotation: CGFloat {
+        switch self {
+        case .left:
+            return -0.18
+        case .right:
+            return 0.18
+        }
     }
 }

@@ -37,6 +37,7 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 - Vision work is capped to 15fps.
 - The capture session is released when disabled, locked, sleeping, or quitting.
 - Diagnostics menu should expose self-check, HUD tests, and Mission Control switch tests.
+- Directional feedback should pulse the menu bar status item left or right when a tilt triggers.
 
 ## Important Files
 
