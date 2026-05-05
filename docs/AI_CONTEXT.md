@@ -13,7 +13,7 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 ## Hard Requirements
 
 - Dock icon should be visible.
-- Compact menu bar status item should be visible near Control Center.
+- `Tilt` menu bar status item should be visible near Control Center.
 - No storyboard or XIB.
 - No external dependencies.
 - No Swift Package dependencies.
@@ -37,7 +37,7 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 - Vision work is capped to 15fps.
 - The capture session is released when disabled, locked, sleeping, or quitting.
 - Diagnostics menu should expose self-check, HUD tests, and Mission Control switch tests.
-- Directional feedback should pulse the menu bar status item left or right when a tilt triggers.
+- Directional feedback should briefly change the menu bar status item to `Left` or `Right` when a tilt triggers.
 
 ## Important Files
 

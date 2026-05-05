@@ -24,16 +24,16 @@ Enable shortcuts for moving left and right a space. TiltSwitch posts `Control` +
 
 Current builds show a Dock icon and a menu bar item. If you installed an older build, download the latest release and replace the app in `/Applications`.
 
-## The Dock Icon Shows But The Menu Bar Icon Does Not
+## The Dock Icon Shows But The Menu Bar Item Does Not
 
-TiltSwitch `0.1.2` and newer use a compact walking icon in the top-right menu bar, near Control Center. If you do not see it:
+TiltSwitch `0.1.8` and newer show a `Tilt` item in the top-right menu bar, near Control Center. If you do not see it:
 
 1. Quit TiltSwitch from the Dock menu.
 2. Replace `/Applications/TiltSwitch.app` with the latest release.
 3. Relaunch the app.
-4. Look for the walking icon near Wi-Fi, battery, clock, or Control Center.
+4. Look for `Tilt` near Wi-Fi, battery, clock, or Control Center.
 
-On notched MacBooks or crowded menu bars, macOS may hide extra-wide status items. Version `0.1.2` fixes that by using a standard square menu bar item.
+On notched MacBooks or crowded menu bars, macOS may hide extra status items. Quit a few menu bar apps temporarily if `Tilt` still does not appear.
 
 ## How To Verify The App Is Working
 

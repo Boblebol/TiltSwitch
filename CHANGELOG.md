@@ -2,6 +2,11 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.8 - 2026-05-05
+
+- Changed the menu bar item from icon-only to a visible `Tilt` label with a directional icon.
+- Directional feedback now briefly changes the label to `Left` or `Right`.
+
 ## 0.1.7 - 2026-05-05
 
 - Added menu bar feedback when a left or right head tilt is detected.

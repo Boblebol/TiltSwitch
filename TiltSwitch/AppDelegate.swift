@@ -9,6 +9,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         static let sensitivity = "sensitivity"
     }
 
+    private enum StatusItemAppearance {
+        static let defaultTitle = "Tilt"
+        static let defaultSymbolName = "arrow.left.and.right.circle.fill"
+    }
+
     private enum Sensitivity: String, CaseIterable {
         case low
         case medium
@@ -98,13 +103,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setupStatusItem() {
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.autosaveName = "TiltSwitchStatusItem"
         item.button?.image = makeStatusItemImage(
-            systemSymbolName: "figure.walk",
+            systemSymbolName: StatusItemAppearance.defaultSymbolName,
             accessibilityDescription: "TiltSwitch"
         )
-        item.button?.imagePosition = .imageOnly
+        item.button?.title = StatusItemAppearance.defaultTitle
+        item.button?.font = .systemFont(ofSize: 12, weight: .semibold)
+        item.button?.imagePosition = .imageLeft
         item.button?.imageScaling = .scaleProportionallyDown
         item.button?.toolTip = "TiltSwitch"
         item.menu = makeStatusMenu()
@@ -334,6 +341,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             systemSymbolName: direction.statusItemSymbolName,
             accessibilityDescription: direction.statusItemTooltip
         )
+        button.title = direction.statusItemTitle
         button.toolTip = direction.statusItemTooltip
         animateStatusItemButton(button, direction: direction)
 
@@ -363,9 +371,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func restoreStatusItemIcon() {
         statusItem?.button?.image = makeStatusItemImage(
-            systemSymbolName: "figure.walk",
+            systemSymbolName: StatusItemAppearance.defaultSymbolName,
             accessibilityDescription: "TiltSwitch"
         )
+        statusItem?.button?.title = StatusItemAppearance.defaultTitle
         statusItem?.button?.toolTip = "TiltSwitch"
     }
 
@@ -643,6 +652,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 private extension Direction {
+    var statusItemTitle: String {
+        switch self {
+        case .left:
+            return "Left"
+        case .right:
+            return "Right"
+        }
+    }
+
     var statusItemSymbolName: String {
         switch self {
         case .left:
