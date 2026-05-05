@@ -49,12 +49,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var permissionAlertVisible = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+        NSApp.setActivationPolicy(.regular)
         guard !isRunningUnitTests else {
             return
         }
 
         loadSettings()
+        setupMainMenu()
         setupStatusItem()
         setupHUDPanel()
         registerScreenStateNotifications()
@@ -96,27 +97,82 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = NSImage(
+        let image = NSImage(
             systemSymbolName: "figure.walk",
             accessibilityDescription: "TiltSwitch"
         )
-        item.menu = makeMenu()
+        image?.isTemplate = true
+        item.button?.image = image
+        item.button?.title = " \(AppMetadata.statusItemTitle)"
+        item.button?.imagePosition = .imageLeft
+        item.menu = makeStatusMenu()
         statusItem = item
     }
 
-    private func makeMenu() -> NSMenu {
+    private func setupMainMenu() {
+        let mainMenu = NSMenu()
+        let appMenuItem = NSMenuItem()
+        let appMenu = NSMenu(title: AppMetadata.displayName)
+
+        appMenu.addItem(makeMenuItem(
+            title: "About TiltSwitch",
+            action: #selector(showAbout),
+            systemSymbolName: "info.circle"
+        ))
+        appMenu.addItem(.separator())
+        appMenu.addItem(makeMenuItem(
+            title: "Open Website",
+            action: #selector(openWebsite),
+            systemSymbolName: "safari"
+        ))
+        appMenu.addItem(makeMenuItem(
+            title: "View on GitHub",
+            action: #selector(openGitHub),
+            systemSymbolName: "chevron.left.forwardslash.chevron.right"
+        ))
+        appMenu.addItem(.separator())
+        appMenu.addItem(makeMenuItem(
+            title: "Quit TiltSwitch",
+            action: #selector(quit),
+            keyEquivalent: "q",
+            systemSymbolName: "power"
+        ))
+
+        appMenuItem.submenu = appMenu
+        mainMenu.addItem(appMenuItem)
+        NSApp.mainMenu = mainMenu
+    }
+
+    private func makeStatusMenu() -> NSMenu {
         let menu = NSMenu()
 
+        let titleItem = NSMenuItem(title: "TiltSwitch", action: nil, keyEquivalent: "")
+        titleItem.isEnabled = false
+        titleItem.image = NSApp.applicationIconImage
+        menu.addItem(titleItem)
+
+        let stateTitle = isEnabled ? "Active" : "Paused"
+        let stateItem = NSMenuItem(
+            title: "\(stateTitle) · \(sensitivity.title) sensitivity",
+            action: nil,
+            keyEquivalent: ""
+        )
+        stateItem.isEnabled = false
+        menu.addItem(stateItem)
+        menu.addItem(.separator())
+
         let enabledItem = NSMenuItem(
-            title: "Enable TiltSwitch",
+            title: isEnabled ? "Disable TiltSwitch" : "Enable TiltSwitch",
             action: #selector(toggleEnabled),
             keyEquivalent: ""
         )
         enabledItem.target = self
         enabledItem.state = isEnabled ? .on : .off
+        enabledItem.image = NSImage(systemSymbolName: isEnabled ? "pause.circle" : "play.circle", accessibilityDescription: nil)
         menu.addItem(enabledItem)
 
         let sensitivityItem = NSMenuItem(title: "Sensitivity", action: nil, keyEquivalent: "")
+        sensitivityItem.image = NSImage(systemSymbolName: "slider.horizontal.3", accessibilityDescription: nil)
         let sensitivityMenu = NSMenu()
         for value in Sensitivity.allCases {
             let item = NSMenuItem(
@@ -133,13 +189,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(sensitivityItem)
 
         menu.addItem(.separator())
+        menu.addItem(makeMenuItem(
+            title: "Open Website",
+            action: #selector(openWebsite),
+            systemSymbolName: "safari"
+        ))
+        menu.addItem(makeMenuItem(
+            title: "View on GitHub",
+            action: #selector(openGitHub),
+            systemSymbolName: "chevron.left.forwardslash.chevron.right"
+        ))
+        menu.addItem(.separator())
+        menu.addItem(makeMenuItem(
+            title: "Camera Settings",
+            action: #selector(openCameraSettings),
+            systemSymbolName: "camera"
+        ))
+        menu.addItem(makeMenuItem(
+            title: "Mission Control Shortcuts",
+            action: #selector(openKeyboardShortcutsSettings),
+            systemSymbolName: "keyboard"
+        ))
+        menu.addItem(makeMenuItem(
+            title: "Quick Help",
+            action: #selector(showQuickHelp),
+            systemSymbolName: "questionmark.circle"
+        ))
+        menu.addItem(makeDiagnosticsMenu())
+        menu.addItem(.separator())
 
         let quitItem = NSMenuItem(
-            title: "Quit",
+            title: "Quit TiltSwitch",
             action: #selector(quit),
             keyEquivalent: "q"
         )
         quitItem.target = self
+        quitItem.image = NSImage(systemSymbolName: "power", accessibilityDescription: nil)
         menu.addItem(quitItem)
 
         return menu
@@ -221,7 +306,87 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func updateMenu() {
-        statusItem?.menu = makeMenu()
+        statusItem?.menu = makeStatusMenu()
+    }
+
+    func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
+        let menu = NSMenu()
+        menu.addItem(makeMenuItem(
+            title: "Open Website",
+            action: #selector(openWebsite),
+            systemSymbolName: "safari"
+        ))
+        menu.addItem(makeMenuItem(
+            title: "View on GitHub",
+            action: #selector(openGitHub),
+            systemSymbolName: "chevron.left.forwardslash.chevron.right"
+        ))
+        menu.addItem(makeMenuItem(
+            title: "Run Self Check",
+            action: #selector(runSelfCheck),
+            systemSymbolName: "checklist"
+        ))
+        menu.addItem(.separator())
+        menu.addItem(makeMenuItem(
+            title: isEnabled ? "Disable TiltSwitch" : "Enable TiltSwitch",
+            action: #selector(toggleEnabled),
+            systemSymbolName: isEnabled ? "pause.circle" : "play.circle"
+        ))
+        menu.addItem(makeMenuItem(
+            title: "Quit TiltSwitch",
+            action: #selector(quit),
+            keyEquivalent: "q",
+            systemSymbolName: "power"
+        ))
+        return menu
+    }
+
+    private func makeDiagnosticsMenu() -> NSMenuItem {
+        let diagnosticsItem = NSMenuItem(title: "Diagnostics", action: nil, keyEquivalent: "")
+        diagnosticsItem.image = NSImage(systemSymbolName: "stethoscope", accessibilityDescription: nil)
+
+        let diagnosticsMenu = NSMenu()
+        diagnosticsMenu.addItem(makeMenuItem(
+            title: "Run Self Check",
+            action: #selector(runSelfCheck),
+            systemSymbolName: "checklist"
+        ))
+        diagnosticsMenu.addItem(.separator())
+        diagnosticsMenu.addItem(makeMenuItem(
+            title: "Test HUD Left",
+            action: #selector(testHUDLeft),
+            systemSymbolName: "arrow.left.circle"
+        ))
+        diagnosticsMenu.addItem(makeMenuItem(
+            title: "Test HUD Right",
+            action: #selector(testHUDRight),
+            systemSymbolName: "arrow.right.circle"
+        ))
+        diagnosticsMenu.addItem(.separator())
+        diagnosticsMenu.addItem(makeMenuItem(
+            title: "Test Previous Space",
+            action: #selector(testPreviousSpace),
+            systemSymbolName: "arrow.left.square"
+        ))
+        diagnosticsMenu.addItem(makeMenuItem(
+            title: "Test Next Space",
+            action: #selector(testNextSpace),
+            systemSymbolName: "arrow.right.square"
+        ))
+        diagnosticsItem.submenu = diagnosticsMenu
+        return diagnosticsItem
+    }
+
+    private func makeMenuItem(
+        title: String,
+        action: Selector,
+        keyEquivalent: String = "",
+        systemSymbolName: String
+    ) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: keyEquivalent)
+        item.target = self
+        item.image = NSImage(systemSymbolName: systemSymbolName, accessibilityDescription: nil)
+        return item
     }
 
     private func handle(_ direction: Direction) {
@@ -297,6 +462,115 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func screenDidWake() {
         isScreenLocked = false
         updateMonitorState()
+    }
+
+    @objc private func showAbout() {
+        let alert = NSAlert()
+        alert.messageText = "TiltSwitch"
+        alert.informativeText = "Switch Mission Control spaces with a head tilt.\n\nTilt right for the next space. Tilt left for the previous space."
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+
+    @objc private func showQuickHelp() {
+        let alert = NSAlert()
+        alert.messageText = "How TiltSwitch Works"
+        alert.informativeText = "Keep TiltSwitch enabled, grant camera access, and make sure Mission Control shortcuts for Control + Left/Right Arrow are enabled in System Settings."
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Mission Control Settings")
+
+        if alert.runModal() == .alertSecondButtonReturn {
+            openKeyboardShortcutsSettings()
+        }
+    }
+
+    @objc private func runSelfCheck() {
+        let permission: String
+        switch HeadTiltMonitor.cameraPermission() {
+        case .authorized:
+            permission = "Camera permission: OK"
+        case .notDetermined:
+            permission = "Camera permission: not requested yet"
+        case .denied:
+            permission = "Camera permission: denied"
+        }
+
+        let appState = isEnabled ? "TiltSwitch: enabled" : "TiltSwitch: disabled"
+        let screenState = isScreenLocked ? "Screen state: locked or sleeping" : "Screen state: active"
+        let sensitivityState = "Sensitivity: \(sensitivity.title) (\(sensitivity.threshold) rad)"
+
+        let alert = NSAlert()
+        alert.messageText = "TiltSwitch Self Check"
+        alert.informativeText = [
+            appState,
+            screenState,
+            permission,
+            sensitivityState,
+            "Menu bar item: visible",
+            "Dock icon: visible",
+            "Mission Control shortcuts: verify Control + Left/Right Arrow in System Settings"
+        ].joined(separator: "\n")
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Camera Settings")
+        alert.addButton(withTitle: "Keyboard Shortcuts")
+
+        let response = alert.runModal()
+        if response == .alertSecondButtonReturn {
+            openCameraSettings()
+        } else if response == .alertThirdButtonReturn {
+            openKeyboardShortcutsSettings()
+        }
+    }
+
+    @objc private func testHUDLeft() {
+        showDiagnosticHUD(.left)
+    }
+
+    @objc private func testHUDRight() {
+        showDiagnosticHUD(.right)
+    }
+
+    @objc private func testPreviousSpace() {
+        testSpaceSwitch(.left)
+    }
+
+    @objc private func testNextSpace() {
+        testSpaceSwitch(.right)
+    }
+
+    private func showDiagnosticHUD(_ direction: Direction) {
+        guard let panel = hudPanel else {
+            return
+        }
+        hudDisplayController.show(direction, in: panel)
+    }
+
+    private func testSpaceSwitch(_ direction: Direction) {
+        guard spaceSwitcher.switchSpace(direction) else {
+            let alert = NSAlert()
+            alert.messageText = "Cooldown Active"
+            alert.informativeText = "TiltSwitch waits 800ms between space switches. Try the diagnostic again in a moment."
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+            return
+        }
+        showDiagnosticHUD(direction)
+    }
+
+    @objc private func openWebsite() {
+        NSWorkspace.shared.open(AppMetadata.websiteURL)
+    }
+
+    @objc private func openGitHub() {
+        NSWorkspace.shared.open(AppMetadata.githubURL)
+    }
+
+    @objc private func openCameraSettings() {
+        NSWorkspace.shared.open(AppMetadata.cameraSettingsURL)
+    }
+
+    @objc private func openKeyboardShortcutsSettings() {
+        NSWorkspace.shared.open(AppMetadata.keyboardShortcutsSettingsURL)
     }
 
     @objc private func quit() {

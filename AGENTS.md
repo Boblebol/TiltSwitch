@@ -14,7 +14,7 @@ This repository contains TiltSwitch, a small native macOS menu bar app written i
 - Minimum deployment target is macOS 13.0.
 - Build must remain Universal (`arm64` and `x86_64`).
 - App Sandbox must remain disabled. The only entitlement should be camera access.
-- `Info.plist` must keep `LSUIElement=YES`.
+- `Info.plist` must not set `LSUIElement`; the app should show a Dock icon and a menu bar item.
 
 ## Verification
 

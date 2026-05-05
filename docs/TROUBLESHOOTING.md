@@ -22,7 +22,18 @@ Enable shortcuts for moving left and right a space. TiltSwitch posts `Control` +
 
 ## The App Does Not Show In The Dock
 
-This is expected. TiltSwitch is configured with `LSUIElement=YES` and lives only in the menu bar.
+Current builds show a Dock icon and a menu bar item. If you installed an older build, download the latest release and replace the app in `/Applications`.
+
+## How To Verify The App Is Working
+
+Use the TiltSwitch menu bar item:
+
+1. Open `Diagnostics > Run Self Check`.
+2. Confirm camera permission is OK.
+3. Use `Diagnostics > Test HUD Left` and `Test HUD Right` to verify the overlay.
+4. Use `Diagnostics > Test Previous Space` and `Test Next Space` to verify Mission Control keyboard events.
+
+If the HUD tests work but space tests do not, enable Mission Control shortcuts for `Control` + Left/Right Arrow in System Settings.
 
 ## CPU Usage Is High
 

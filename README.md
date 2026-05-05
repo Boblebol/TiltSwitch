@@ -12,7 +12,7 @@ It is built with pure Apple frameworks, no third-party dependencies, and a progr
 
 ## Features
 
-- Menu bar only app with `LSUIElement=YES`
+- Dock icon plus menu bar status item
 - Real-time head roll detection with `AVCaptureSession` and `VNDetectFaceLandmarksRequest`
 - Mission Control space switching through `CGEvent`
 - 800ms cooldown to avoid repeated space switches
@@ -21,6 +21,7 @@ It is built with pure Apple frameworks, no third-party dependencies, and a progr
   - Medium: `0.35` radians
   - High: `0.5` radians
 - Transparent floating HUD with left/right SF Symbols
+- Diagnostics menu for self-checks, HUD tests, and Mission Control switch tests
 - Camera starts only while TiltSwitch is enabled
 - Camera session is released when disabled, sleeping, locked, or quitting
 - No network calls, telemetry, analytics, storyboard, XIB, packages, or external dependencies
@@ -43,6 +44,18 @@ The latest packaged build is available from [GitHub Releases](https://github.com
 Early builds are not notarized. If macOS blocks first launch, right-click `TiltSwitch.app`, choose Open, then confirm.
 
 Website: https://boblebol.github.io/TiltSwitch/
+
+## Debug And Verify
+
+After launching TiltSwitch, use the Dock icon or the `TiltSwitch` menu bar item:
+
+1. Open `Diagnostics > Run Self Check`.
+2. Confirm camera permission is OK.
+3. Run `Diagnostics > Test HUD Left` and `Test HUD Right`.
+4. Run `Diagnostics > Test Previous Space` and `Test Next Space`.
+5. If space switching does not move, open `Mission Control Shortcuts` and enable `Control` + Left/Right Arrow.
+
+The app also has quick links to the website, GitHub, Camera Settings, and Quit.
 
 ## Build
 

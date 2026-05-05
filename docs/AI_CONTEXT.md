@@ -8,11 +8,12 @@ TiltSwitch uses the front camera and Apple Vision face roll detection to switch 
 
 ## Search Keywords
 
-macOS menu bar app, LSUIElement, AppKit, SwiftUI HUD, AVCaptureSession, Vision framework, VNDetectFaceLandmarksRequest, face roll, head tilt, Mission Control spaces, CGEvent, Control Arrow, camera permission, NSPanel, UserDefaults.
+macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSession, Vision framework, VNDetectFaceLandmarksRequest, face roll, head tilt, Mission Control spaces, CGEvent, Control Arrow, camera permission, NSPanel, UserDefaults.
 
 ## Hard Requirements
 
-- No Dock icon.
+- Dock icon should be visible.
+- Menu bar status item should be visible.
 - No storyboard or XIB.
 - No external dependencies.
 - No Swift Package dependencies.
@@ -35,6 +36,7 @@ macOS menu bar app, LSUIElement, AppKit, SwiftUI HUD, AVCaptureSession, Vision f
 - Space switching has an 800ms cooldown.
 - Vision work is capped to 15fps.
 - The capture session is released when disabled, locked, sleeping, or quitting.
+- Diagnostics menu should expose self-check, HUD tests, and Mission Control switch tests.
 
 ## Important Files
 

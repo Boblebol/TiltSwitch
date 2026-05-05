@@ -15,7 +15,8 @@ xmllint --noout TiltSwitch.xcodeproj/xcshareddata/xcschemes/TiltSwitch.xcscheme
 
 Then verify:
 
-- `Info.plist` contains `LSUIElement=YES`.
+- The Dock icon is visible.
+- The menu bar status item is visible.
 - `Info.plist` contains `NSCameraUsageDescription`.
 - `TiltSwitch.entitlements` contains camera access only.
 - App Sandbox is not enabled in the project.

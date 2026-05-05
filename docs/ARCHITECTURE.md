@@ -21,8 +21,10 @@ TiltSwitch is a small AppKit menu bar app with strict boundaries between app lif
 Owns app lifecycle and AppKit integration:
 
 - `NSStatusItem`
+- Dock menu and app menu
 - menu actions
 - sensitivity settings
+- diagnostics actions
 - camera permission request
 - screen lock/sleep handling
 - transparent `NSPanel` creation
@@ -66,7 +68,8 @@ Owns HUD presentation:
 - Architectures: standard Universal macOS architectures
 - App Sandbox: disabled
 - Entitlements: camera only
-- `LSUIElement`: enabled
+- Dock icon: enabled
+- Menu bar status item: enabled
 
 ## Performance Notes
 
