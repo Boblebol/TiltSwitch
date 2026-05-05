@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="TiltSwitch is a native macOS menu bar app that switches Mission Control spaces when you tilt your head.">
+  <meta property="og:title" content="TiltSwitch">
+  <meta property="og:description" content="Switch macOS spaces with a tiny head tilt. Local-only, native, no telemetry.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://boblebol.github.io/TiltSwitch/">
+  <title>TiltSwitch - switch spaces with your face</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101114;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.14);
+      --text: #f7f3eb;
+      --muted: #bcb6aa;
+      --line: rgba(255, 255, 255, 0.16);
+      --mint: #77e6c6;
+      --coral: #ff7d6e;
+      --gold: #ffd166;
+      --blue: #8ab4ff;
+      --shadow: 0 30px 100px rgba(0, 0, 0, 0.45);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(119, 230, 198, 0.16), transparent 24rem),
+        radial-gradient(circle at 82% 8%, rgba(255, 125, 110, 0.18), transparent 22rem),
+        linear-gradient(180deg, #101114 0%, #17141a 48%, #111419 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-header {
+      align-items: center;
+      display: flex;
+      gap: 1rem;
+      justify-content: space-between;
+      left: 0;
+      margin: 0 auto;
+      max-width: 1120px;
+      padding: 1rem 1.25rem;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 5;
+    }
+
+    .brand {
+      align-items: center;
+      display: flex;
+      font-weight: 800;
+      gap: 0.65rem;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      align-items: center;
+      background: var(--text);
+      border-radius: 8px;
+      color: #151515;
+      display: grid;
+      font-size: 1.05rem;
+      height: 2rem;
+      place-items: center;
+      width: 2rem;
+    }
+
+    .nav-actions {
+      align-items: center;
+      display: flex;
+      gap: 0.55rem;
+    }
+
+    .nav-link,
+    .ghost-button,
+    .primary-button {
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 750;
+      line-height: 1;
+      padding: 0.78rem 0.95rem;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      white-space: nowrap;
+    }
+
+    .nav-link,
+    .ghost-button {
+      background: rgba(16, 17, 20, 0.42);
+      border: 1px solid var(--line);
+      color: var(--text);
+      backdrop-filter: blur(14px);
+    }
+
+    .primary-button {
+      background: var(--mint);
+      border: 1px solid rgba(119, 230, 198, 0.3);
+      color: #10251f;
+      box-shadow: 0 14px 42px rgba(119, 230, 198, 0.24);
+    }
+
+    .nav-link:hover,
+    .ghost-button:hover,
+    .primary-button:hover {
+      transform: translateY(-1px);
+    }
+
+    main {
+      overflow: hidden;
+    }
+
+    .hero {
+      display: grid;
+      min-height: 100vh;
+      padding: 7rem 1.25rem 3rem;
+      place-items: center;
+      position: relative;
+    }
+
+    .hero-grid {
+      align-items: center;
+      display: grid;
+      gap: 3rem;
+      grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.98fr);
+      max-width: 1120px;
+      width: 100%;
+    }
+
+    .eyebrow {
+      align-items: center;
+      color: var(--gold);
+      display: inline-flex;
+      font-size: 0.84rem;
+      font-weight: 850;
+      gap: 0.45rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(3.5rem, 8vw, 8rem);
+      letter-spacing: 0;
+      line-height: 0.82;
+      margin: 0;
+      max-width: 8ch;
+    }
+
+    .hero-copy {
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.32rem);
+      line-height: 1.55;
+      margin: 1.4rem 0 0;
+      max-width: 38rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 2rem;
+    }
+
+    .mini-note {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-top: 0.9rem;
+    }
+
+    .stage {
+      aspect-ratio: 1 / 1;
+      min-height: 360px;
+      position: relative;
+    }
+
+    .space-stack {
+      inset: 0;
+      position: absolute;
+      transform: perspective(900px) rotateX(58deg) rotateZ(-28deg);
+    }
+
+    .space-card {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      height: 52%;
+      left: 13%;
+      overflow: hidden;
+      position: absolute;
+      top: 21%;
+      transition: transform 420ms cubic-bezier(.2, .9, .2, 1), opacity 420ms ease;
+      width: 72%;
+    }
+
+    .space-card::before {
+      content: "";
+      display: block;
+      height: 22%;
+      opacity: 0.9;
+    }
+
+    .space-card::after {
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.72) 0 24%, transparent 24% 100%),
+        linear-gradient(90deg, rgba(255,255,255,0.34) 0 58%, transparent 58% 100%),
+        linear-gradient(90deg, rgba(255,255,255,0.18) 0 42%, transparent 42% 100%);
+      background-position: 1rem 1rem, 1rem 2.3rem, 1rem 3.6rem;
+      background-repeat: no-repeat;
+      background-size: 76% 0.45rem, 58% 0.38rem, 66% 0.38rem;
+      content: "";
+      display: block;
+      height: 78%;
+    }
+
+    .space-one {
+      background: linear-gradient(135deg, #212735, #354552);
+      transform: translate3d(-4.8rem, -1.4rem, 0);
+    }
+
+    .space-one::before {
+      background: linear-gradient(90deg, var(--coral), #ffc15a);
+    }
+
+    .space-two {
+      background: linear-gradient(135deg, #1e2d2d, #32514b);
+      transform: translate3d(0, 0, 0);
+      z-index: 2;
+    }
+
+    .space-two::before {
+      background: linear-gradient(90deg, var(--mint), var(--blue));
+    }
+
+    .space-three {
+      background: linear-gradient(135deg, #271e34, #4c3b61);
+      transform: translate3d(4.8rem, 1.4rem, 0);
+    }
+
+    .space-three::before {
+      background: linear-gradient(90deg, #ca8cff, var(--gold));
+    }
+
+    .face-console {
+      align-items: center;
+      background: rgba(16, 17, 20, 0.74);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      bottom: 4%;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr auto 1fr;
+      left: 50%;
+      padding: 1rem;
+      position: absolute;
+      transform: translateX(-50%);
+      width: min(92%, 460px);
+      z-index: 3;
+    }
+
+    .tilt-button {
+      appearance: none;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 1.35rem;
+      font-weight: 900;
+      height: 3rem;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .tilt-button:hover {
+      background: var(--panel-strong);
+      transform: translateY(-1px);
+    }
+
+    .face {
+      align-items: center;
+      background: linear-gradient(145deg, #f7dca6, #ffb38b);
+      border: 2px solid rgba(255, 255, 255, 0.78);
+      border-radius: 50%;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+      color: #1e1715;
+      display: grid;
+      height: 7rem;
+      justify-items: center;
+      position: relative;
+      transform: rotate(var(--tilt, 0deg));
+      transition: transform 420ms cubic-bezier(.2, .9, .2, 1);
+      width: 7rem;
+    }
+
+    .face::before,
+    .face::after {
+      background: #171312;
+      border-radius: 50%;
+      content: "";
+      height: 0.62rem;
+      position: absolute;
+      top: 2.45rem;
+      width: 0.62rem;
+    }
+
+    .face::before {
+      left: 2.05rem;
+    }
+
+    .face::after {
+      right: 2.05rem;
+    }
+
+    .mouth {
+      border: 3px solid #171312;
+      border-left: 0;
+      border-top: 0;
+      border-radius: 0 0 3rem 0;
+      height: 1.35rem;
+      margin-top: 1.8rem;
+      transform: rotate(45deg);
+      width: 1.35rem;
+    }
+
+    .signal {
+      background: rgba(16, 17, 20, 0.62);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 750;
+      left: 50%;
+      padding: 0.6rem 0.75rem;
+      position: absolute;
+      text-align: center;
+      top: 9%;
+      transform: translateX(-50%);
+      width: min(82%, 340px);
+      z-index: 4;
+    }
+
+    .signal strong {
+      color: var(--text);
+    }
+
+    .section {
+      padding: 5rem 1.25rem;
+    }
+
+    .section-inner {
+      margin: 0 auto;
+      max-width: 1120px;
+    }
+
+    .section-title {
+      font-size: clamp(2.1rem, 5vw, 4rem);
+      letter-spacing: 0;
+      line-height: 0.95;
+      margin: 0 0 1.1rem;
+      max-width: 11ch;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.65;
+      margin: 0;
+      max-width: 42rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 2rem;
+    }
+
+    .feature {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-height: 12rem;
+      padding: 1.25rem;
+    }
+
+    .feature b {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .feature p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .demo-band {
+      background: rgba(255, 255, 255, 0.04);
+      border-block: 1px solid var(--line);
+    }
+
+    .sequence {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 2.2rem;
+    }
+
+    .step {
+      background: #f7f3eb;
+      border-radius: 8px;
+      color: #17161a;
+      min-height: 14rem;
+      overflow: hidden;
+      padding: 1.2rem;
+      position: relative;
+    }
+
+    .step span {
+      color: rgba(23, 22, 26, 0.55);
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 850;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .step b {
+      display: block;
+      font-size: 1.25rem;
+      line-height: 1.12;
+      max-width: 11rem;
+    }
+
+    .keycap-row {
+      bottom: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      left: 1rem;
+      position: absolute;
+    }
+
+    .keycap {
+      background: #17161a;
+      border-radius: 8px;
+      color: var(--text);
+      font-weight: 900;
+      min-width: 3.1rem;
+      padding: 0.7rem 0.9rem;
+      text-align: center;
+    }
+
+    .install-panel {
+      align-items: center;
+      background: linear-gradient(135deg, rgba(119, 230, 198, 0.16), rgba(255, 209, 102, 0.12));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: 1fr auto;
+      margin-top: 2rem;
+      padding: 1.5rem;
+    }
+
+    .install-panel p {
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0.45rem 0 0;
+    }
+
+    footer {
+      color: var(--muted);
+      padding: 3rem 1.25rem;
+      text-align: center;
+    }
+
+    @media (max-width: 880px) {
+      .site-header {
+        position: absolute;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 6rem;
+      }
+
+      .hero-grid,
+      .feature-grid,
+      .sequence,
+      .install-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .stage {
+        min-height: 420px;
+      }
+
+      .face-console {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .hero-actions,
+      .nav-actions {
+        align-items: stretch;
+      }
+
+      .primary-button,
+      .ghost-button {
+        text-align: center;
+      }
+
+      .face {
+        height: 5.8rem;
+        width: 5.8rem;
+      }
+
+      .face::before,
+      .face::after {
+        top: 2rem;
+      }
+
+      .face::before {
+        left: 1.7rem;
+      }
+
+      .face::after {
+        right: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="TiltSwitch home">
+      <span class="brand-mark">↔</span>
+      <span>TiltSwitch</span>
+    </a>
+    <nav class="nav-actions" aria-label="Main navigation">
+      <a class="nav-link" href="#privacy">Privacy</a>
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="ghost-button" href="https://github.com/Boblebol/TiltSwitch">GitHub</a>
+      <a class="primary-button" href="https://github.com/Boblebol/TiltSwitch/releases/latest">Download</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Native macOS • local-only • mildly theatrical</div>
+          <h1 id="hero-title">Switch spaces with your face.</h1>
+          <p class="hero-copy">
+            TiltSwitch sits quietly in your menu bar. Tilt your head right to jump to the next Mission Control space. Tilt left to go back. Your keyboard can finally take a tiny break.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="https://github.com/Boblebol/TiltSwitch/releases/latest">Download for macOS</a>
+            <a class="ghost-button" href="https://github.com/Boblebol/TiltSwitch">View source</a>
+          </div>
+          <p class="mini-note">macOS 13+ • no network calls • no telemetry • no external dependencies</p>
+        </div>
+
+        <div class="stage" aria-label="Interactive head tilt demo">
+          <div class="signal" id="signal">roll: <strong>0.00 rad</strong> · waiting for dramatic eyebrow movement</div>
+          <div class="space-stack" aria-hidden="true">
+            <div class="space-card space-one"></div>
+            <div class="space-card space-two"></div>
+            <div class="space-card space-three"></div>
+          </div>
+          <div class="face-console">
+            <button class="tilt-button" type="button" data-tilt="left" aria-label="Demo previous space">←</button>
+            <div class="face" id="face" aria-hidden="true">
+              <div class="mouth"></div>
+            </div>
+            <button class="tilt-button" type="button" data-tilt="right" aria-label="Demo next space">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section demo-band" id="privacy">
+      <div class="section-inner">
+        <h2 class="section-title">Tiny app. Big privacy posture.</h2>
+        <p class="section-copy">
+          TiltSwitch uses the camera only inside the local app process. Frames are not recorded, stored, uploaded, analyzed remotely, or turned into a dashboard nobody asked for.
+        </p>
+        <div class="feature-grid">
+          <article class="feature">
+            <b>Local Vision</b>
+            <p>Apple Vision reads face roll angle on your Mac. No server, no account, no background mystery.</p>
+          </article>
+          <article class="feature">
+            <b>Menu bar only</b>
+            <p>No Dock icon, no big window, no “productivity hub”. Just a small status item.</p>
+          </article>
+          <article class="feature">
+            <b>Stops politely</b>
+            <p>The camera session is released when disabled, locked, sleeping, or quitting.</p>
+          </article>
+          <article class="feature">
+            <b>No dependencies</b>
+            <p>Pure Swift, AppKit, SwiftUI, AVFoundation, Vision, and CoreGraphics.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="section-inner">
+        <h2 class="section-title">How the magic trick works.</h2>
+        <p class="section-copy">
+          There is no magic. Just camera frames, a face roll angle, a cooldown, and the same Mission Control keyboard shortcuts you already know.
+        </p>
+        <div class="sequence">
+          <article class="step">
+            <span>Step 1</span>
+            <b>Vision detects your head roll.</b>
+            <div class="keycap-row">
+              <div class="keycap">0.35</div>
+              <div class="keycap">rad</div>
+            </div>
+          </article>
+          <article class="step">
+            <span>Step 2</span>
+            <b>TiltSwitch waits out the cooldown.</b>
+            <div class="keycap-row">
+              <div class="keycap">800</div>
+              <div class="keycap">ms</div>
+            </div>
+          </article>
+          <article class="step">
+            <span>Step 3</span>
+            <b>macOS receives Control + Arrow.</b>
+            <div class="keycap-row">
+              <div class="keycap">Ctrl</div>
+              <div class="keycap">→</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-inner">
+        <h2 class="section-title">Install it. Nod responsibly.</h2>
+        <p class="section-copy">
+          Download the latest release, drag TiltSwitch into Applications, grant camera access, and make sure Mission Control has Control + Arrow shortcuts enabled.
+        </p>
+        <div class="install-panel">
+          <div>
+            <strong>Latest release</strong>
+            <p>The app is packaged as a macOS DMG and ZIP from GitHub Actions. Early builds may be unsigned, so macOS can ask you to right-click and choose Open the first time.</p>
+          </div>
+          <a class="primary-button" href="https://github.com/Boblebol/TiltSwitch/releases/latest">Get TiltSwitch</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built for people who change spaces more often than they change tabs.
+  </footer>
+
+  <script>
+    const face = document.getElementById("face");
+    const signal = document.getElementById("signal");
+    const cards = Array.from(document.querySelectorAll(".space-card"));
+    let offset = 0;
+
+    function setDemo(direction) {
+      const roll = direction === "right" ? 0.42 : -0.42;
+      const arrow = direction === "right" ? "→" : "←";
+      const key = direction === "right" ? "Control + Right Arrow" : "Control + Left Arrow";
+      offset += direction === "right" ? -1 : 1;
+
+      face.style.setProperty("--tilt", direction === "right" ? "18deg" : "-18deg");
+      signal.innerHTML = `roll: <strong>${roll.toFixed(2)} rad</strong> · ${key} ${arrow}`;
+
+      cards.forEach((card, index) => {
+        const shift = (index - 1) * 4.8 + offset * 1.15;
+        const lift = (index - 1) * 1.4 + offset * 0.35;
+        card.style.transform = `translate3d(${shift}rem, ${lift}rem, 0)`;
+      });
+
+      window.clearTimeout(setDemo.resetTimer);
+      setDemo.resetTimer = window.setTimeout(() => {
+        face.style.setProperty("--tilt", "0deg");
+        signal.innerHTML = 'roll: <strong>0.00 rad</strong> · cooldown complete';
+      }, 760);
+    }
+
+    document.querySelectorAll("[data-tilt]").forEach((button) => {
+      button.addEventListener("click", () => setDemo(button.dataset.tilt));
+    });
+
+    window.setInterval(() => {
+      setDemo(Math.random() > 0.5 ? "right" : "left");
+    }, 3400);
+  </script>
+</body>
+</html>

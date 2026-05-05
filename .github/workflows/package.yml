@@ -1,0 +1,58 @@
+name: Package App
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to attach artifacts to
+        required: true
+        default: v0.1.0
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF_NAME}"
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Build package
+        run: bash scripts/package-release.sh "${{ steps.version.outputs.version }}"
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TiltSwitch-${{ steps.version.outputs.tag }}-macOS
+          path: |
+            dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.zip
+            dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.dmg
+            dist/checksums.txt
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ steps.version.outputs.tag }}" \
+            "dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.zip" \
+            "dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.dmg" \
+            "dist/checksums.txt" \
+            --clobber

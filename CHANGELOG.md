@@ -8,3 +8,4 @@ All notable changes to TiltSwitch will be documented in this file.
 - Added camera-based head roll detection with Vision.
 - Added Mission Control space switching with `Control` + arrow keys.
 - Added sensitivity presets, HUD feedback, screen lock handling, and settings persistence.
+- Added GitHub Pages landing page and packaged release artifacts.

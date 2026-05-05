@@ -25,6 +25,20 @@ xcodebuild build \
   -configuration Release
 ```
 
+## Package A Release Locally
+
+With a full Xcode installation selected:
+
+```sh
+bash scripts/package-release.sh 0.1.0
+```
+
+This creates:
+
+- `dist/TiltSwitch-v0.1.0-macOS.dmg`
+- `dist/TiltSwitch-v0.1.0-macOS.zip`
+- `dist/checksums.txt`
+
 If code signing is not configured:
 
 ```sh

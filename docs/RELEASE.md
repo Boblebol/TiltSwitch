@@ -39,4 +39,10 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-Attach the release artifact if distributing a signed app bundle.
+The `Package App` workflow builds and uploads:
+
+- `TiltSwitch-vX.Y.Z-macOS.dmg`
+- `TiltSwitch-vX.Y.Z-macOS.zip`
+- `checksums.txt`
+
+The workflow can also be run manually from GitHub Actions with a release tag input.

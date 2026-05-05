@@ -1,6 +1,7 @@
 # TiltSwitch
 
 [![CI](https://github.com/Boblebol/TiltSwitch/actions/workflows/ci.yml/badge.svg)](https://github.com/Boblebol/TiltSwitch/actions/workflows/ci.yml)
+[![Package App](https://github.com/Boblebol/TiltSwitch/actions/workflows/package.yml/badge.svg)](https://github.com/Boblebol/TiltSwitch/actions/workflows/package.yml)
 
 TiltSwitch is a lightweight macOS menu bar app that uses the front camera and Apple Vision to detect head roll. Tilting your head switches Mission Control spaces:
 
@@ -30,6 +31,18 @@ It is built with pure Apple frameworks, no third-party dependencies, and a progr
 - Xcode with macOS SDK
 - Front-facing camera
 - Mission Control keyboard shortcuts enabled for `Control` + arrow keys
+
+## Download
+
+The latest packaged build is available from [GitHub Releases](https://github.com/Boblebol/TiltSwitch/releases/latest):
+
+- `TiltSwitch-vX.Y.Z-macOS.dmg` - drag-and-drop installer
+- `TiltSwitch-vX.Y.Z-macOS.zip` - zipped app bundle
+- `checksums.txt` - SHA-256 checksums
+
+Early builds are not notarized. If macOS blocks first launch, right-click `TiltSwitch.app`, choose Open, then confirm.
+
+Website: https://boblebol.github.io/TiltSwitch/
 
 ## Build
 
