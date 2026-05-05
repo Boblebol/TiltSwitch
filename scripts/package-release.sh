@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="${1:-0.1.2}"
+VERSION="${1:-0.1.3}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="$ROOT_DIR/build"
 DERIVED_DATA_DIR="$BUILD_DIR/DerivedData"
@@ -19,11 +19,23 @@ xcodebuild build \
   -scheme TiltSwitch \
   -configuration Release \
   -derivedDataPath "$DERIVED_DATA_DIR" \
+  ARCHS="arm64 x86_64" \
+  ONLY_ACTIVE_ARCH=NO \
   CODE_SIGNING_ALLOWED=YES \
   CODE_SIGN_STYLE=Manual \
   CODE_SIGN_IDENTITY="-"
 
 codesign --verify --deep --strict "$APP_PATH"
+
+ARCH_OUTPUT="$(lipo -archs "$APP_PATH/Contents/MacOS/TiltSwitch")"
+case " $ARCH_OUTPUT " in
+  *" arm64 "*" x86_64 "*|*" x86_64 "*" arm64 "*)
+    ;;
+  *)
+    printf 'Expected Universal binary with arm64 and x86_64, got: %s\n' "$ARCH_OUTPUT" >&2
+    exit 1
+    ;;
+esac
 
 ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
 

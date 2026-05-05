@@ -2,6 +2,12 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.3 - 2026-05-05
+
+- Forced release packaging to build a Universal `arm64` + `x86_64` binary.
+- Added package-time architecture validation so non-Universal releases fail before upload.
+- Made the package workflow create the GitHub Release automatically when a new version tag is pushed.
+
 ## 0.1.2 - 2026-05-05
 
 - Changed the menu bar item to a compact square walking icon so it stays visible on crowded or notched menu bars.

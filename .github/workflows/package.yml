@@ -6,7 +6,7 @@ on:
       tag:
         description: Release tag to attach artifacts to
         required: true
-        default: v0.1.2
+        default: v0.1.3
   push:
     tags:
       - "v*"
@@ -42,6 +42,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh release view "${{ steps.version.outputs.tag }}" >/dev/null 2>&1 || \
+            gh release create "${{ steps.version.outputs.tag }}" \
+              --title "TiltSwitch ${{ steps.version.outputs.version }}" \
+              --notes "Packaged TiltSwitch ${{ steps.version.outputs.version }} for macOS."
+
           gh release upload "${{ steps.version.outputs.tag }}" \
             "dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.zip" \
             "dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.dmg" \
