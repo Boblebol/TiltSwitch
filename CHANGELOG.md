@@ -2,6 +2,11 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.5 - 2026-05-05
+
+- Disabled Xcode base entitlement injection for release packaging.
+- Added package-time entitlement validation so the distributed app contains only camera access.
+
 ## 0.1.4 - 2026-05-05
 
 - Fixed the Universal architecture validation script so it accepts `lipo` output in either architecture order.
