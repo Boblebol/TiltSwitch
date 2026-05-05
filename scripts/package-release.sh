@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="${1:-0.1.5}"
+VERSION="${1:-0.1.6}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="$ROOT_DIR/build"
 DERIVED_DATA_DIR="$BUILD_DIR/DerivedData"
@@ -29,7 +29,7 @@ xcodebuild build \
 codesign --verify --deep --strict "$APP_PATH"
 
 ENTITLEMENTS_PLIST="$DIST_DIR/entitlements.plist"
-codesign -d --entitlements "$ENTITLEMENTS_PLIST" "$APP_PATH" >/dev/null 2>&1
+codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PLIST" 2>/dev/null
 
 if [[ "$(/usr/bin/grep -c '<key>' "$ENTITLEMENTS_PLIST")" != "1" ]]; then
   printf 'Expected exactly one entitlement in release app.\n' >&2

@@ -2,6 +2,10 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.6 - 2026-05-05
+
+- Fixed release entitlement export so package validation reads the signed app entitlements as XML.
+
 ## 0.1.5 - 2026-05-05
 
 - Disabled Xcode base entitlement injection for release packaging.
