@@ -15,6 +15,8 @@
 		TS1000000000000000000006 /* AppMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS2000000000000000000010 /* AppMetadata.swift */; };
 		TS1000000000000000000007 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = TS2000000000000000000011 /* Assets.xcassets */; };
 		TS1000000000000000000008 /* AppMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS2000000000000000000012 /* AppMetadataTests.swift */; };
+		TS1000000000000000000009 /* ControlPanelModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS2000000000000000000013 /* ControlPanelModelTests.swift */; };
+		TS1000000000000000000010 /* ControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS2000000000000000000014 /* ControlPanelView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		TS2000000000000000000010 /* AppMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetadata.swift; sourceTree = "<group>"; };
 		TS2000000000000000000011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		TS2000000000000000000012 /* AppMetadataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetadataTests.swift; sourceTree = "<group>"; };
+		TS2000000000000000000013 /* ControlPanelModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanelModelTests.swift; sourceTree = "<group>"; };
+		TS2000000000000000000014 /* ControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanelView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +68,7 @@
 			children = (
 				TS2000000000000000000001 /* AppDelegate.swift */,
 				TS2000000000000000000010 /* AppMetadata.swift */,
+				TS2000000000000000000014 /* ControlPanelView.swift */,
 				TS2000000000000000000009 /* HeadTiltMonitor.swift */,
 				TS2000000000000000000007 /* SpaceSwitcher.swift */,
 				TS2000000000000000000008 /* HUDView.swift */,
@@ -78,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				TS2000000000000000000012 /* AppMetadataTests.swift */,
+				TS2000000000000000000013 /* ControlPanelModelTests.swift */,
 				TS2000000000000000000006 /* SpaceSwitcherTests.swift */,
 			);
 			path = TiltSwitchTests;
@@ -193,6 +199,7 @@
 			files = (
 				TS1000000000000000000001 /* AppDelegate.swift in Sources */,
 				TS1000000000000000000006 /* AppMetadata.swift in Sources */,
+				TS1000000000000000000010 /* ControlPanelView.swift in Sources */,
 				TS1000000000000000000004 /* HeadTiltMonitor.swift in Sources */,
 				TS1000000000000000000002 /* SpaceSwitcher.swift in Sources */,
 				TS1000000000000000000003 /* HUDView.swift in Sources */,
@@ -204,6 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				TS1000000000000000000008 /* AppMetadataTests.swift in Sources */,
+				TS1000000000000000000009 /* ControlPanelModelTests.swift in Sources */,
 				TS1000000000000000000005 /* SpaceSwitcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,7 +357,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				ENABLE_PREVIEWS = YES;
@@ -360,7 +368,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.1.9;
+				MARKETING_VERSION = 0.1.10;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.boblebol.TiltSwitch;
 				PRODUCT_BUNDLE_PACKAGE_TYPE = APPL;
@@ -380,7 +388,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				ENABLE_PREVIEWS = YES;
@@ -391,7 +399,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.1.9;
+				MARKETING_VERSION = 0.1.10;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.boblebol.TiltSwitch;
 				PRODUCT_BUNDLE_PACKAGE_TYPE = APPL;
@@ -408,7 +416,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -416,7 +424,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.1.9;
+				MARKETING_VERSION = 0.1.10;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.boblebol.TiltSwitchTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -433,7 +441,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -441,7 +449,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 0.1.9;
+				MARKETING_VERSION = 0.1.10;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.boblebol.TiltSwitchTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

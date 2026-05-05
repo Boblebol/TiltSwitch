@@ -4,7 +4,7 @@ TiltSwitch is a small AppKit menu bar app with strict boundaries between app lif
 
 ## Runtime Flow
 
-1. `AppDelegate` launches as a regular Dock app and creates the visible `TiltSwitch` menu bar item.
+1. `AppDelegate` launches as a regular Dock app and creates the visible `TiltSwitch` menu bar item plus a floating control panel.
 2. The app loads `UserDefaults` settings for enabled state and sensitivity.
 3. If enabled and unlocked, `AppDelegate` checks camera permission.
 4. `HeadTiltMonitor` starts an `AVCaptureSession` on a dedicated background queue.
@@ -24,6 +24,7 @@ Owns app lifecycle and AppKit integration:
 - `NSStatusItem`
 - Dock menu and app menu
 - menu actions
+- floating control panel lifecycle
 - sensitivity settings
 - diagnostics actions
 - menu bar tilt feedback animation
@@ -31,6 +32,17 @@ Owns app lifecycle and AppKit integration:
 - screen lock/sleep handling
 - transparent `NSPanel` creation
 - wiring monitor events to switching and HUD display
+
+### `ControlPanelView.swift`
+
+Owns the interactive floating controls:
+
+- enable/pause action
+- sensitivity selector
+- camera, screen, and menu bar status lines
+- HUD test buttons
+- settings, website, GitHub, and quit actions
+- menu bar visibility diagnostic text
 
 ### `HeadTiltMonitor.swift`
 
@@ -72,6 +84,7 @@ Owns HUD presentation:
 - Entitlements: camera only
 - Dock icon: enabled
 - Menu bar status item: enabled, visible `TiltSwitch` label
+- Floating control panel: enabled, `.floating`, available across spaces
 
 ## Performance Notes
 

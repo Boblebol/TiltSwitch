@@ -48,6 +48,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusItem: NSStatusItem?
     private var statusItemFeedbackWorkItem: DispatchWorkItem?
+    private var controlPanel: NSPanel?
     private var hudPanel: NSPanel?
     private var isEnabled = true
     private var sensitivity: Sensitivity = .medium
@@ -64,6 +65,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupMainMenu()
         setupStatusItem()
         setupHUDPanel()
+        setupControlPanel()
         registerScreenStateNotifications()
 
         monitor.onDirection = { [weak self] direction in
@@ -71,6 +73,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         updateMonitorState()
+        showControlPanel()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -116,6 +119,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let appMenuItem = NSMenuItem()
         let appMenu = NSMenu(title: AppMetadata.displayName)
 
+        appMenu.addItem(makeMenuItem(
+            title: "Show Control Panel",
+            action: #selector(showControlPanel),
+            systemSymbolName: "macwindow"
+        ))
+        appMenu.addItem(.separator())
         appMenu.addItem(makeMenuItem(
             title: "About TiltSwitch",
             action: #selector(showAbout),
@@ -163,6 +172,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(stateItem)
         menu.addItem(.separator())
 
+        menu.addItem(makeMenuItem(
+            title: "Show Control Panel",
+            action: #selector(showControlPanel),
+            systemSymbolName: "macwindow"
+        ))
         let enabledItem = NSMenuItem(
             title: isEnabled ? "Disable TiltSwitch" : "Enable TiltSwitch",
             action: #selector(toggleEnabled),
@@ -250,6 +264,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hudPanel = panel
     }
 
+    private func setupControlPanel() {
+        let panel = NSPanel(
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 450),
+            styleMask: [.titled, .closable, .fullSizeContentView, .utilityWindow],
+            backing: .buffered,
+            defer: false
+        )
+        panel.title = "TiltSwitch"
+        panel.titleVisibility = .hidden
+        panel.titlebarAppearsTransparent = true
+        panel.backgroundColor = .clear
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        panel.contentView = NSHostingView(rootView: makeControlPanelView())
+        panel.hasShadow = false
+        panel.isMovableByWindowBackground = true
+        panel.isOpaque = false
+        panel.isReleasedWhenClosed = false
+        panel.level = .floating
+        controlPanel = panel
+    }
+
     private func registerScreenStateNotifications() {
         let distributedCenter = DistributedNotificationCenter.default()
         distributedCenter.addObserver(
@@ -311,6 +346,85 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem?.menu = makeStatusMenu()
     }
 
+    private func refreshControls() {
+        updateMenu()
+        refreshControlPanel()
+    }
+
+    private func refreshControlPanel() {
+        controlPanel?.contentView = NSHostingView(rootView: makeControlPanelView())
+    }
+
+    private func makeControlPanelView() -> ControlPanelView {
+        ControlPanelView(
+            model: makeControlPanelModel(),
+            actions: ControlPanelActions(
+                toggleEnabled: { [weak self] in self?.toggleEnabled() },
+                selectSensitivity: { [weak self] rawValue in self?.applySensitivity(rawValue: rawValue) },
+                testLeft: { [weak self] in self?.testHUDLeft() },
+                testRight: { [weak self] in self?.testHUDRight() },
+                runSelfCheck: { [weak self] in self?.runSelfCheck() },
+                openWebsite: { [weak self] in self?.openWebsite() },
+                openGitHub: { [weak self] in self?.openGitHub() },
+                openCameraSettings: { [weak self] in self?.openCameraSettings() },
+                openKeyboardShortcutsSettings: { [weak self] in self?.openKeyboardShortcutsSettings() },
+                quit: { [weak self] in self?.quit() }
+            )
+        )
+    }
+
+    private func makeControlPanelModel() -> ControlPanelModel {
+        let permission = cameraStatusText()
+        let screenState = isScreenLocked ? "Screen: locked or sleeping" : "Screen: active"
+        let thresholdText = String(format: "%.2f rad", sensitivity.threshold)
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
+        let options = Sensitivity.allCases.map { value in
+            ControlPanelSensitivityOption(
+                id: value.rawValue,
+                title: value.title,
+                thresholdText: String(format: "%.2f", value.threshold),
+                isSelected: value == sensitivity
+            )
+        }
+
+        return ControlPanelModel(
+            isEnabled: isEnabled,
+            sensitivityTitle: sensitivity.title,
+            thresholdText: thresholdText,
+            cameraStatus: permission,
+            screenStatus: screenState,
+            menuBarStatus: ControlPanelModel.menuBarStatus(
+                itemExists: statusItem != nil,
+                itemIsVisible: statusItem?.isVisible == true,
+                buttonHasWindow: statusItem?.button?.window != nil
+            ),
+            versionText: "v\(version)",
+            sensitivityOptions: options
+        )
+    }
+
+    private func cameraStatusText() -> String {
+        switch HeadTiltMonitor.cameraPermission() {
+        case .authorized:
+            return "Camera: OK"
+        case .notDetermined:
+            return "Camera: not requested yet"
+        case .denied:
+            return "Camera: denied"
+        }
+    }
+
+    private func positionControlPanel(_ panel: NSPanel) {
+        guard let frame = NSScreen.main?.visibleFrame else {
+            return
+        }
+
+        let size = NSSize(width: 360, height: 450)
+        let x = frame.maxX - size.width - 24
+        let y = frame.maxY - size.height - 44
+        panel.setFrame(NSRect(origin: NSPoint(x: x, y: y), size: size), display: true)
+    }
+
     private func showStatusItemFeedback(_ direction: Direction) {
         guard let button = statusItem?.button else {
             return
@@ -353,6 +467,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
         let menu = NSMenu()
         menu.addItem(makeMenuItem(
+            title: "Show Control Panel",
+            action: #selector(showControlPanel),
+            systemSymbolName: "macwindow"
+        ))
+        menu.addItem(.separator())
+        menu.addItem(makeMenuItem(
             title: "Open Website",
             action: #selector(openWebsite),
             systemSymbolName: "safari"
@@ -380,6 +500,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             systemSymbolName: "power"
         ))
         return menu
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        showControlPanel()
+        return true
     }
 
     private func makeDiagnosticsMenu() -> NSMenuItem {
@@ -474,42 +599,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func toggleEnabled() {
         isEnabled.toggle()
         defaults.set(isEnabled, forKey: DefaultsKey.isEnabled)
-        updateMenu()
+        refreshControls()
         updateMonitorState()
     }
 
     @objc private func selectSensitivity(_ sender: NSMenuItem) {
-        guard
-            let rawValue = sender.representedObject as? String,
-            let selectedSensitivity = Sensitivity(rawValue: rawValue)
-        else {
+        guard let rawValue = sender.representedObject as? String else {
+            return
+        }
+
+        applySensitivity(rawValue: rawValue)
+    }
+
+    private func applySensitivity(rawValue: String) {
+        guard let selectedSensitivity = Sensitivity(rawValue: rawValue) else {
             return
         }
 
         sensitivity = selectedSensitivity
         defaults.set(sensitivity.rawValue, forKey: DefaultsKey.sensitivity)
         monitor.updateSensitivityThreshold(sensitivity.threshold)
-        updateMenu()
+        refreshControls()
     }
 
     @objc private func screenDidLock() {
         isScreenLocked = true
         monitor.stop()
+        refreshControlPanel()
     }
 
     @objc private func screenDidUnlock() {
         isScreenLocked = false
         updateMonitorState()
+        refreshControlPanel()
     }
 
     @objc private func screenDidSleep() {
         isScreenLocked = true
         monitor.stop()
+        refreshControlPanel()
     }
 
     @objc private func screenDidWake() {
         isScreenLocked = false
         updateMonitorState()
+        refreshControlPanel()
     }
 
     @objc private func showAbout() {
@@ -554,7 +688,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             screenState,
             permission,
             sensitivityState,
-            "Menu bar item: created - look for the walking icon near Control Center",
+            ControlPanelModel.menuBarStatus(
+                itemExists: statusItem != nil,
+                itemIsVisible: statusItem?.isVisible == true,
+                buttonHasWindow: statusItem?.button?.window != nil
+            ),
+            "Floating panel: available from the Dock icon",
             "Dock icon: visible",
             "Mission Control shortcuts: verify Control + Left/Right Arrow in System Settings"
         ].joined(separator: "\n")
@@ -568,6 +707,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         } else if response == .alertThirdButtonReturn {
             openKeyboardShortcutsSettings()
         }
+    }
+
+    @objc private func showControlPanel() {
+        if controlPanel == nil {
+            setupControlPanel()
+        }
+
+        guard let panel = controlPanel else {
+            return
+        }
+
+        refreshControlPanel()
+        if !panel.isVisible {
+            positionControlPanel(panel)
+        }
+
+        panel.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     @objc private func testHUDLeft() {

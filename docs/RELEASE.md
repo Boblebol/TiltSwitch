@@ -16,6 +16,7 @@ xmllint --noout TiltSwitch.xcodeproj/xcshareddata/xcschemes/TiltSwitch.xcscheme
 Then verify:
 
 - The Dock icon is visible.
+- The floating control panel opens and its buttons are clickable.
 - The `TiltSwitch` menu bar status item is visible near Control Center.
 - `Info.plist` contains `NSCameraUsageDescription`.
 - `TiltSwitch.entitlements` contains camera access only.

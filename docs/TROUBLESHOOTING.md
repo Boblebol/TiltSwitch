@@ -26,22 +26,22 @@ Current builds show a Dock icon and a menu bar item. If you installed an older b
 
 ## The Dock Icon Shows But The Menu Bar Item Does Not
 
-TiltSwitch `0.1.9` and newer show a plain `TiltSwitch` item in the top-right menu bar, near Control Center. If you do not see it:
+TiltSwitch `0.1.10` and newer open a floating control panel at launch and also show a plain `TiltSwitch` item in the top-right menu bar, near Control Center. If you do not see the menu bar item:
 
 1. Quit TiltSwitch from the Dock menu.
 2. Replace `/Applications/TiltSwitch.app` with the latest release.
 3. Relaunch the app.
-4. Look for `TiltSwitch` near Wi-Fi, battery, clock, or Control Center.
+4. Use the floating panel first, then look for `TiltSwitch` near Wi-Fi, battery, clock, or Control Center.
 
-On notched MacBooks or crowded menu bars, macOS may hide extra status items. Quit a few menu bar apps temporarily if `TiltSwitch` still does not appear.
+On notched MacBooks or crowded menu bars, macOS may hide extra status items. The floating panel stays available from the Dock icon even when that happens.
 
 ## How To Verify The App Is Working
 
-Use the TiltSwitch menu bar item, or right-click the Dock icon if you cannot reach the menu bar item:
+Use the floating control panel, the TiltSwitch menu bar item, or right-click the Dock icon:
 
-1. Open `Diagnostics > Run Self Check`.
+1. Click `Check` in the panel or open `Diagnostics > Run Self Check`.
 2. Confirm camera permission is OK.
-3. Use `Diagnostics > Test HUD Left` and `Test HUD Right` to verify the overlay.
+3. Click `Left` and `Right` to verify the overlay.
 4. Use `Diagnostics > Test Previous Space` and `Test Next Space` to verify Mission Control keyboard events.
 
 If the HUD tests work but space tests do not, enable Mission Control shortcuts for `Control` + Left/Right Arrow in System Settings.

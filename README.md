@@ -13,6 +13,7 @@ It is built with pure Apple frameworks, no third-party dependencies, and a progr
 ## Features
 
 - Dock icon plus visible `TiltSwitch` menu bar status item
+- Floating control panel that opens at launch and stays available from the Dock icon
 - Real-time head roll detection with `AVCaptureSession` and `VNDetectFaceLandmarksRequest`
 - Mission Control space switching through `CGEvent`
 - 800ms cooldown to avoid repeated space switches
@@ -48,17 +49,17 @@ Website: https://boblebol.github.io/TiltSwitch/
 
 ## Debug And Verify
 
-After launching TiltSwitch, use the Dock icon or the `TiltSwitch` item in the top-right menu bar, near Control Center:
+After launching TiltSwitch, use the floating control panel. You can reopen it from the Dock icon or from the `TiltSwitch` item in the top-right menu bar, near Control Center:
 
-1. Open `Diagnostics > Run Self Check`.
+1. Click `Check` in the floating panel, or open `Diagnostics > Run Self Check`.
 2. Confirm camera permission is OK.
-3. Run `Diagnostics > Test HUD Left` and `Test HUD Right`.
-4. Run `Diagnostics > Test Previous Space` and `Test Next Space`.
+3. Click `Left` and `Right` in the panel, or run `Diagnostics > Test HUD Left` and `Test HUD Right`.
+4. Run `Diagnostics > Test Previous Space` and `Test Next Space` from the menu bar when it is visible.
 5. If space switching does not move, open `Mission Control Shortcuts` and enable `Control` + Left/Right Arrow.
 
 The app also has quick links to the website, GitHub, Camera Settings, and Quit.
 
-If you see the Dock icon but not the menu bar item, make sure you are running `0.1.9` or newer. Older builds used a saved or icon-heavy status item that could be easy to miss.
+If you see the Dock icon but not the menu bar item, make sure you are running `0.1.10` or newer. The floating panel remains usable even when macOS hides extra menu bar items.
 
 ## Build
 
@@ -97,6 +98,7 @@ The app uses the camera frames locally only for Vision face roll detection.
 TiltSwitch intentionally keeps one file per concern:
 
 - `AppDelegate.swift` - status item, menu, settings, permission flow, HUD panel, lifecycle
+- `ControlPanelView.swift` - SwiftUI floating controls and status diagnostics
 - `HeadTiltMonitor.swift` - camera capture, Vision face landmarks, 15fps frame throttling
 - `SpaceSwitcher.swift` - `CGEvent` posting and cooldown logic
 - `HUDView.swift` - SwiftUI arrow overlay and fade timing

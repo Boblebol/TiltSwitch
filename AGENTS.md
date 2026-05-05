@@ -6,7 +6,8 @@ This repository contains TiltSwitch, a small native macOS menu bar app written i
 
 - Keep the app dependency-free: Apple frameworks only.
 - Keep one source file per concern:
-  - `AppDelegate.swift`: AppKit app lifecycle, status item, menu, settings, permission flow, HUD panel.
+  - `AppDelegate.swift`: AppKit app lifecycle, status item, menu, settings, permission flow, panels.
+  - `ControlPanelView.swift`: SwiftUI floating controls and status diagnostics.
   - `HeadTiltMonitor.swift`: camera capture and Vision face roll detection.
   - `SpaceSwitcher.swift`: Mission Control space switching and cooldown.
   - `HUDView.swift`: SwiftUI HUD overlay.

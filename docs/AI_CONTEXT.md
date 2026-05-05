@@ -8,12 +8,13 @@ TiltSwitch uses the front camera and Apple Vision face roll detection to switch 
 
 ## Search Keywords
 
-macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSession, Vision framework, VNDetectFaceLandmarksRequest, face roll, head tilt, Mission Control spaces, CGEvent, Control Arrow, camera permission, NSPanel, UserDefaults.
+macOS utility app, Dock icon, menu bar app, floating control panel, AppKit, SwiftUI HUD, AVCaptureSession, Vision framework, VNDetectFaceLandmarksRequest, face roll, head tilt, Mission Control spaces, CGEvent, Control Arrow, camera permission, NSPanel, UserDefaults.
 
 ## Hard Requirements
 
 - Dock icon should be visible.
 - `TiltSwitch` menu bar status item should be visible near Control Center.
+- Floating control panel should open at launch and be available from the Dock icon.
 - No storyboard or XIB.
 - No external dependencies.
 - No Swift Package dependencies.
@@ -38,15 +39,18 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 - The capture session is released when disabled, locked, sleeping, or quitting.
 - Diagnostics menu should expose self-check, HUD tests, and Mission Control switch tests.
 - Directional feedback should briefly change the menu bar status item to `Left` or `Right` when a tilt triggers.
+- Floating control panel should expose enable/pause, sensitivity, self-check, HUD tests, settings links, website, GitHub, and quit.
 
 ## Important Files
 
 - `TiltSwitch/AppDelegate.swift`
+- `TiltSwitch/ControlPanelView.swift`
 - `TiltSwitch/HeadTiltMonitor.swift`
 - `TiltSwitch/SpaceSwitcher.swift`
 - `TiltSwitch/HUDView.swift`
 - `TiltSwitch/Info.plist`
 - `TiltSwitch/TiltSwitch.entitlements`
+- `TiltSwitchTests/ControlPanelModelTests.swift`
 - `TiltSwitchTests/SpaceSwitcherTests.swift`
 
 ## Common Change Points
@@ -56,3 +60,4 @@ macOS utility app, Dock icon, menu bar app, AppKit, SwiftUI HUD, AVCaptureSessio
 - Vision throttle: `HeadTiltMonitor.minimumVisionInterval`
 - HUD timing: `HUDDisplayController.show(_:in:)`
 - Menu structure: `AppDelegate.makeStatusMenu()`
+- Floating controls: `ControlPanelView`

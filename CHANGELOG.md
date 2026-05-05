@@ -2,6 +2,12 @@
 
 All notable changes to TiltSwitch will be documented in this file.
 
+## 0.1.10 - 2026-05-05
+
+- Added a floating control panel that opens at launch and can be reopened from the Dock icon.
+- Added panel controls for enable/pause, sensitivity, HUD tests, settings links, self-check, website, GitHub, and quit.
+- Added menu bar visibility diagnostics to call out when macOS creates the status item but hides it.
+
 ## 0.1.9 - 2026-05-05
 
 - Removed status item position autosaving so macOS cannot restore a hidden or stale menu bar placement.

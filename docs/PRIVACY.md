@@ -31,7 +31,7 @@ TiltSwitch stores only local settings in `UserDefaults`:
 
 The camera session runs only while TiltSwitch is enabled and the screen is active. The session is stopped and released when:
 
-- TiltSwitch is disabled from the menu bar
+- TiltSwitch is disabled from the menu bar or floating control panel
 - the screen locks
 - displays sleep
 - the app quits
