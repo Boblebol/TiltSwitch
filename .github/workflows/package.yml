@@ -17,8 +17,6 @@ permissions:
 jobs:
   package:
     runs-on: macos-14
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout
@@ -39,15 +37,6 @@ jobs:
 
       - name: Build package
         run: bash scripts/package-release.sh "${{ steps.version.outputs.version }}"
-
-      - name: Upload workflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: TiltSwitch-${{ steps.version.outputs.tag }}-macOS
-          path: |
-            dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.zip
-            dist/TiltSwitch-${{ steps.version.outputs.tag }}-macOS.dmg
-            dist/checksums.txt
 
       - name: Upload release assets
         env:
